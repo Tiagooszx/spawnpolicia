@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spawn Completo - Brasil Roleplay</title>
+    <link rel="icon" type="image/png" href="asset/policia.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-logo">
+                <img src="asset/policia.png" alt="Brasil Policia" class="logo">
+                <h1>Spawn Policia</h1>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="veiculos">🚗 Veículos</button>
+            <button class="tab-btn" data-tab="coordenadas">📍 Coordenadas</button>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Pesquisar...">
+        </div>
+
+        <div class="filters" id="filters"></div>
+
+        <div class="result-count">Mostrando resultados...</div>
+
+        <div id="itemsList" class="items-list"></div>
+    </main>
+
+    <script>
+        const SystemData = (function() {
+            let vehicles = [];
+            let coordinates = [];
+            let currentTab = 'veiculos';
+
+            async function loadVehicles() {
+                try {
+                    const response = await fetch('vehicles.json');
+                    vehicles = await response.json();
+                    console.log('✅ Veículos carregados');
+                } catch (error) {
+                    console.error('❌ Erro ao carregar vehicles.json:', error);
+                    vehicles = [];
+                }
+            }
+
+            async function loadCoordinates() {
+                try {
+                    const response = await fetch('coordinates.json');
+                    coordinates = await response.json();
+                    console.log('✅ Coordenadas carregadas');
+                } catch (error) {
+                    console.error('❌ Erro ao carregar coordinates.json:', error);
+                    coordinates = [];
+                }
+            }
+
+            return {
+                getVehicles: () => vehicles,
+                getCoordinates: () => coordinates,
+                getCurrentTab: () => currentTab,
+                setCurrentTab: (tab) => currentTab = tab,
+                loadData: async () => {
+                    await loadVehicles();
+                    await loadCoordinates();
+                }
+            };
+        })();
+
+        let currentFilter = 'Todos';
+
+        function renderFilters(tab) {
+            const filtersContainer = document.getElementById('filters');
+            
+            if (tab === 'veiculos') {
+                filtersContainer.innerHTML = `
+                    <button class="filter-btn active" data-filter="Todos">Todos</button>
+                    <button class="filter-btn" data-filter="PCESP">PCESP</button>
+                    <button class="filter-btn" data-filter="PF">PF</button>
+                    <button class="filter-btn" data-filter="PMERJ">PMERJ</button>
+                    <button class="filter-btn" data-filter="PRF">PRF</button>
+                    <button class="filter-btn" data-filter="BOPE">BOPE</button>
+                    <button class="filter-btn" data-filter="ROTA">ROTA</button>
+                    <button class="filter-btn" data-filter="EB">EB</button>
+                `;
+                
+                // Adicionar eventos aos botões
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        currentFilter = btn.dataset.filter;
+                        renderItems(document.getElementById('searchInput').value, currentFilter);
+                    });
+                });
+            } else {
+                // Sem filtros para coordenadas
+                filtersContainer.innerHTML = '';
+            }
+        }
+
+        function renderItems(filter = '', typeFilter = 'Todos') {
+            const itemsList = document.getElementById('itemsList');
+            const currentTab = SystemData.getCurrentTab();
+            
+            if (currentTab === 'veiculos') {
+                const vehicles = SystemData.getVehicles();
+                
+                const filtered = vehicles.filter(v => {
+                    const matchesSearch = v.carro.toLowerCase().includes(filter.toLowerCase()) ||
+                                         v.spawn.toLowerCase().includes(filter.toLowerCase()) ||
+                                         v.guarnicao.toLowerCase().includes(filter.toLowerCase());
+                    const matchesType = typeFilter === 'Todos' || v.guarnicao === typeFilter;
+                    return matchesSearch && matchesType;
+                });
+
+                document.querySelector('.result-count').textContent = 
+                    `Mostrando 1-${filtered.length} de ${vehicles.length} veículos`;
+
+                itemsList.innerHTML = filtered.map((v) => {
+                    return `
+                    <div class="item-card">
+                        <div class="item-info">
+                            <div class="info-group">
+                                <span class="item-label">Carro:</span>
+                                <span class="item-value">${v.carro}</span>
+                            </div>
+                            <div class="info-group">
+                                <span class="item-label">Spawn:</span>
+                                <span class="item-value">${v.spawn}</span>
+                            </div>
+                            <div class="info-group">
+                                <span class="item-label">Guarnição:</span>
+                                <span class="item-value">${v.guarnicao}</span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn-copy" onclick="copySpawn('${v.spawn}')" title="Copiar">📋</button>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+            } else {
+                const coordinates = SystemData.getCoordinates();
+                
+                const filtered = coordinates.filter(c => {
+                    const matchesSearch = c.local.toLowerCase().includes(filter.toLowerCase()) ||
+                                         c.coordenada.toLowerCase().includes(filter.toLowerCase());
+                    return matchesSearch;
+                });
+
+                document.querySelector('.result-count').textContent = 
+                    `Mostrando 1-${filtered.length} de ${coordinates.length} locais`;
+
+                itemsList.innerHTML = filtered.map((c) => {
+                    return `
+                    <div class="item-card">
+                        <div class="item-info">
+                            <div class="info-group">
+                                <span class="item-label">Local:</span>
+                                <span class="item-value">${c.local}</span>
+                            </div>
+                            <div class="info-group">
+                                <span class="item-label">Coordenada:</span>
+                                <span class="item-value">${c.coordenada}</span>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn-copy" onclick="copyCoordinate('${c.coordenada}')" title="Copiar">📋</button>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        function copySpawn(spawn) {
+            const commandText = `car ${spawn}`;
+            navigator.clipboard.writeText(commandText);
+            showNotification(`✅ Copiado: ${commandText}`);
+        }
+
+        function copyCoordinate(coord) {
+            navigator.clipboard.writeText(coord);
+            showNotification(`✅ Coordenada copiada: ${coord}`);
+        }
+
+        function showNotification(message) {
+            const notif = document.createElement('div');
+            notif.className = 'notification';
+            notif.textContent = message;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.classList.add('show'), 100);
+            setTimeout(() => {
+                notif.classList.remove('show');
+                setTimeout(() => notif.remove(), 300);
+            }, 2000);
+        }
+
+        // Event Listeners
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            renderItems(e.target.value, currentFilter);
+        });
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                SystemData.setCurrentTab(btn.dataset.tab);
+                currentFilter = 'Todos';
+                document.getElementById('searchInput').value = '';
+                renderFilters(btn.dataset.tab);
+                renderItems('', 'Todos');
+            });
+        });
+
+        // Inicialização
+        (async function init() {
+            await SystemData.loadData();
+            renderFilters('veiculos');
+            renderItems();
+            console.log('💡 Edite vehicles.json e coordinates.json para alterar os dados');
+        })();
+    </script>
+</body>
+</html>

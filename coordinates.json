@@ -1,0 +1,58 @@
+[
+    {
+        "local": "Clock Tower",
+        "coordenada": "-3210.89,-2591.41,8.81"
+    },
+    {
+        "local": "Dust 2",
+        "coordenada": "-4463.24,2755.01,412.33"
+    },
+    {
+        "local": "Pista MotoCross",
+        "coordenada": "2657.98,-3801.37,141.79"
+    },
+    {
+        "local": "Mansão Cayo Perico",
+        "coordenada": "4972.96,-5747.77,19.76"
+    },
+    {
+        "local": "Pista de Kart",
+        "coordenada": "4890.14,-2551.66,371.29"
+    },
+    {
+        "local": "Batalhão PM Zona Sul",
+        "coordenada": "678.90, 123.45, 67.89"
+    },
+    {
+        "local": "Posto Rodoviário Norte",
+        "coordenada": "789.01, 234.56, 78.90"
+    },
+    {
+        "local": "Posto Rodoviário Sul",
+        "coordenada": "890.12, 345.67, 89.01"
+    },
+    {
+        "local": "Base BOPE Principal",
+        "coordenada": "901.23, 456.78, 90.12"
+    },
+    {
+        "local": "Base BOPE Secundária",
+        "coordenada": "012.34, 567.89, 01.23"
+    },
+    {
+        "local": "Quartel ROTA Centro",
+        "coordenada": "123.45, 678.90, 12.34"
+    },
+    {
+        "local": "Quartel ROTA Zona Norte",
+        "coordenada": "234.56, 789.01, 23.45"
+    },
+    {
+        "local": "Base Exército Central",
+        "coordenada": "345.67, 890.12, 34.56"
+    },
+    {
+        "local": "Quartel Exército Norte",
+        "coordenada": "456.78, 901.23, 45.67"
+    }
+]

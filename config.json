@@ -1,0 +1,31 @@
+{
+    "welcome_channel": null,
+    "allowed_role": null,
+    "citizen_role": null,
+    "tickets": {
+        "brajud": {
+            "label": "\u2696\ufe0f Processo BRAJUD",
+            "prefix": "processo",
+            "category": null,
+            "log_channel": null,
+            "open_roles": [],
+            "staff_roles": []
+        },
+        "cidadao": {
+            "label": "\ud83e\uddd1\u200d\ud83d\udcbc Atendimento ao Cidad\u00e3o",
+            "prefix": "cidadao",
+            "category": null,
+            "log_channel": null,
+            "open_roles": [],
+            "staff_roles": []
+        },
+        "denuncia": {
+            "label": "\u26a0\ufe0f Den\u00fancia OAB",
+            "prefix": "denuncia",
+            "category": null,
+            "log_channel": null,
+            "open_roles": [],
+            "staff_roles": []
+        }
+    }
+}

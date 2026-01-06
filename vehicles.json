@@ -1,0 +1,345 @@
+[
+  {
+    "carro": "CAVEIRÃO Civil",
+    "spawn": "wrstorm",
+    "guarnicao": "PCESP"
+  },
+  {
+    "carro": "BMW Civil",
+    "spawn": "rvm3rpm",
+    "guarnicao": "PCESP"
+  },
+  {
+    "carro": "Raptor Civil",
+    "spawn": "rvraptorcore",
+    "guarnicao": "PCESP"
+  },
+  {
+    "carro": "GTM Civil",
+    "spawn": "rvafricatgtm",
+    "guarnicao": "PCESP"
+  },
+  {
+    "carro": "Cayenne Civil",
+    "spawn": "rvcayennerpm",
+    "guarnicao": "PCESP"
+  },
+  {
+    "carro": "Speed Civil",
+    "spawn": "rvgt3speed",
+    "guarnicao": "PCESP"
+  },
+  {
+    "carro": "Heli Civil",
+    "spawn": "wras350",
+    "guarnicao": "PCESP"
+  },
+  {
+    "carro": "Onibus Civil",
+    "spawn": "coach",
+    "guarnicao": "PCESP"
+  },
+  {
+    "carro": "RangerCOT Federal",
+    "spawn": "WRranger23",
+    "guarnicao": "PF"
+  },
+  {
+    "carro": "Trailblazer COE",
+    "spawn": "WRtrailblazer22",
+    "guarnicao": "PMERJ"
+  },
+  {
+    "carro": "SPEED BOPE",
+    "spawn": "rvlancerbope",
+    "guarnicao": "BOPE"
+  },
+  {
+    "carro": "L200 COE",
+    "spawn": "WRl200",
+    "guarnicao": "PMERJ"
+  },
+    {
+    "carro": "Heli Militar",
+    "spawn": "wras350",
+    "guarnicao": "PMERJ"
+  },
+    {
+    "carro": "BMW Militar",
+    "spawn": "rvm3rpm",
+    "guarnicao": "PMERJ"
+  },
+    {
+    "carro": "Raptor Militar",
+    "spawn": "rvraptorcore",
+    "guarnicao": "PMERJ"
+  },
+    {
+    "carro": "Cayenne Militar",
+    "spawn": "wrcayennerpm",
+    "guarnicao": "PMERJ"
+  },
+    {
+    "carro": "GTM Militar",
+    "spawn": "rvafricatgtm",
+    "guarnicao": "PMERJ"
+  },
+    {
+    "carro": "SPEED Militar",
+    "spawn": "rvgt3speed",
+    "guarnicao": "PMERJ"
+  },
+      {
+    "carro": "CAVEIRÃO CHOQUE",
+    "spawn": "wrstorm",
+    "guarnicao": "PMERJ"
+  },
+        {
+    "carro": "CAVEIRÃO Militar",
+    "spawn": "caveiraopmerj",
+    "guarnicao": "PMERJ"
+  },
+      {
+    "carro": "Hilux PRF",
+    "spawn": "wr21hiluxprf",
+    "guarnicao": "PRF"
+  },
+      {
+    "carro": "Cruze PRF",
+    "spawn": "wrcruzeprf",
+    "guarnicao": "PRF"
+  },
+      {
+    "carro": "GTM PRF",
+    "spawn": "wrr1200prf",
+    "guarnicao": "PRF"
+  },
+      {
+    "carro": "L200GRR PRF",
+    "spawn": "wrl200prf",
+    "guarnicao": "PRF"
+  },
+        {
+    "carro": "COT Federal",
+    "spawn": "25fpiu1",
+    "guarnicao": "PF"
+  },
+        {
+    "carro": "Trailblazer PRF",
+    "spawn": "wrtrailblazerprf",
+    "guarnicao": "PRF"
+  },
+        {
+    "carro": "Heli PRF",
+    "spawn": "wras350prf",
+    "guarnicao": "PRF"
+  },
+        {
+    "carro": "GTM Federal",
+    "spawn": "wrtiger1200fed",
+    "guarnicao": "PF"
+  },
+        {
+    "carro": "L200 Federal",
+    "spawn": "wrl200fed",
+    "guarnicao": "PF"
+  },
+        {
+    "carro": "Corolla Federal",
+    "spawn": "wrcorollafed",
+    "guarnicao": "PF"
+  },
+        {
+    "carro": "GTM500 Federal",
+    "spawn": "wrcb500fed",
+    "guarnicao": "PF"
+  },
+        {
+    "carro": "Descaracterizada PF",
+    "spawn": "wrswfed",
+    "guarnicao": "PF"
+  },
+        {
+    "carro": "Descaracterizada Civil",
+    "spawn": "wrswfed",
+    "guarnicao": "PCESP"
+  },
+        {
+    "carro": "5Ton Exército",
+    "spawn": "wr5ton",
+    "guarnicao": "EB"
+  },
+        {
+    "carro": "Ranger Exército",
+    "spawn": "wrranger23eb",
+    "guarnicao": "EB"
+  },
+        {
+    "carro": "F850 Exército",
+    "spawn": "wrf850rocam",
+    "guarnicao": "EB"
+  },
+        {
+    "carro": "RangerCAPOTA EB",
+    "spawn": "wrranger23ebc",
+    "guarnicao": "EB"
+  },
+          {
+    "carro": "Trailblazer ROTA",
+    "spawn": "wrtrailpol",
+    "guarnicao": "ROTA"
+  },
+          {
+    "carro": "SPEED ROTA",
+    "spawn": "rvdodge",
+    "guarnicao": "ROTA"
+  },
+          {
+    "carro": "Trailblazer CORE",
+    "spawn": "wrtrailblazer22",
+    "guarnicao": "PCESP"
+  },
+          {
+    "carro": "Trailblazer Militar",
+    "spawn": "WRtrailblazer22",
+    "guarnicao": "PMERJ"
+  },
+          {
+    "carro": "Trailblazer BOPE",
+    "spawn": "WRtrailblazer22",
+    "guarnicao": "BOPE"
+  },
+            {
+    "carro": "Duster Civil",
+    "spawn": "wrdusterpol",
+    "guarnicao": "PCESP"
+  },
+              {
+    "carro": "Corolla2 Civil",
+    "spawn": "wrcorolla",
+    "guarnicao": "PCESP"
+  },
+              {
+    "carro": "Corolla1 Civil",
+    "spawn": "wrcorollapol",
+    "guarnicao": "PCESP"
+  },
+                {
+    "carro": "Trailblazer1 Civil",
+    "spawn": "wrtrailpol",
+    "guarnicao": "PCESP"
+  },
+                  {
+    "carro": "L200 Militar",
+    "spawn": "WRl200",
+    "guarnicao": "PMERJ"
+  },
+                    {
+    "carro": "L200 CHOQUE",
+    "spawn": "WRl200",
+    "guarnicao": "PMERJ"
+  },
+                      {
+    "carro": "SW4 ROTA",
+    "spawn": "wrsw4pol",
+    "guarnicao": "ROTA"
+  },
+                        {
+    "carro": "Corolla Militar",
+    "spawn": "wrcorolla",
+    "guarnicao": "PMERJ"
+  },
+                        {
+    "carro": "Trailblazer2 Civil",
+    "spawn": "wrtrailblazer22",
+    "guarnicao": "PCESP"
+  },
+                          {
+    "carro": "Trailblazer GATE",
+    "spawn": "wrtrailblazer22",
+    "guarnicao": "PMERJ"
+  },                       {
+    "carro": "Ranger Militar",
+    "spawn": "wrranger23",
+    "guarnicao": "PMERJ"
+  },                      {
+    "carro": "Ranger COE",
+    "spawn": "wrranger23",
+    "guarnicao": "PMERJ"
+  },        
+           {
+    "carro": "Ranger CORE",
+    "spawn": "wrranger23",
+    "guarnicao": "PCESP"
+  },
+             {
+    "carro": "F850 Civil",
+    "spawn": "wrf850rocam",
+    "guarnicao": "PCESP"
+  },
+             {
+    "carro": "F850 Choque",
+    "spawn": "wrf850rocam",
+    "guarnicao": "PMERJ"
+  },
+             {
+    "carro": "F850 ROTA",
+    "spawn": "wrf850rocam",
+    "guarnicao": "ROTA"
+  },
+             {
+    "carro": "F850 Federal",
+    "spawn": "wrf850rocam",
+    "guarnicao": "PF"
+  },
+               {
+    "carro": "Ranger BOPE",
+    "spawn": "wrranger23",
+    "guarnicao": "BOPE"
+  },
+                 {
+    "carro": "Heli Federal",
+    "spawn": "wras350fed",
+    "guarnicao": "PF"
+  },
+                   {
+    "carro": "L200 BOPE",
+    "spawn": "wrl200",
+    "guarnicao": "BOPE"
+  },
+                     {
+    "carro": "L200 CORE",
+    "spawn": "wrl200",
+    "guarnicao": "PCESP"
+  },
+                       {
+    "carro": "L200 Civil",
+    "spawn": "wrl200",
+    "guarnicao": "PCESP"
+  },
+                         {
+    "carro": "Trailblazer CHOQUE",
+    "spawn": "WRtrailblazer22",
+    "guarnicao": "PMERJ"
+  },
+                           {
+    "carro": "Corolla CORE",
+    "spawn": "wrcorolla",
+    "guarnicao": "PCESP"
+  },
+                             {
+    "carro": "Camaro PRF",
+    "spawn": "WRprfcamaro19",
+    "guarnicao": "PRF"
+  },
+                               {
+    "carro": "Trailblazer Federal",
+    "spawn": "wrtrailfed",
+    "guarnicao": "PF"
+  },
+                                 {
+    "carro": "Heli EB",
+    "spawn": "haitun",
+    "guarnicao": "EB"
+  }
+]
