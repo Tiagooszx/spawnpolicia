@@ -35,198 +35,300 @@
     </main>
 
     <script>
-        const SystemData = (function() {
-            let vehicles = [];
-            let coordinates = [];
-            let currentTab = 'veiculos';
+        // Estado da aplicação usando módulo
+        const AppState = (() => {
+            const state = {
+                vehicles: [],
+                coordinates: [],
+                currentTab: 'veiculos',
+                currentFilter: 'Todos',
+                searchTerm: ''
+            };
 
-            async function loadVehicles() {
-                try {
-                    const response = await fetch('vehicles.json');
-                    vehicles = await response.json();
-                    console.log('✅ Veículos carregados');
-                } catch (error) {
-                    console.error('❌ Erro ao carregar vehicles.json:', error);
-                    vehicles = [];
-                }
-            }
-
-            async function loadCoordinates() {
-                try {
-                    const response = await fetch('coordinates.json');
-                    coordinates = await response.json();
-                    console.log('✅ Coordenadas carregadas');
-                } catch (error) {
-                    console.error('❌ Erro ao carregar coordinates.json:', error);
-                    coordinates = [];
-                }
-            }
+            const FILTERS = ['Todos', 'PCESP', 'PF', 'PMERJ', 'PRF', 'BOPE', 'ROTA', 'EB'];
 
             return {
-                getVehicles: () => vehicles,
-                getCoordinates: () => coordinates,
-                getCurrentTab: () => currentTab,
-                setCurrentTab: (tab) => currentTab = tab,
-                loadData: async () => {
-                    await loadVehicles();
-                    await loadCoordinates();
-                }
+                get: (key) => state[key],
+                set: (key, value) => state[key] = value,
+                getFilters: () => FILTERS
             };
         })();
 
-        let currentFilter = 'Todos';
+        // Módulo de carregamento de dados
+        const DataLoader = (() => {
+            const loadJSON = async (filename) => {
+                try {
+                    const response = await fetch(filename);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    console.error(`❌ Erro ao carregar ${filename}:`, error);
+                    return [];
+                }
+            };
 
-        function renderFilters(tab) {
-            const filtersContainer = document.getElementById('filters');
-            
-            if (tab === 'veiculos') {
-                filtersContainer.innerHTML = `
-                    <button class="filter-btn active" data-filter="Todos">Todos</button>
-                    <button class="filter-btn" data-filter="PCESP">PCESP</button>
-                    <button class="filter-btn" data-filter="PF">PF</button>
-                    <button class="filter-btn" data-filter="PMERJ">PMERJ</button>
-                    <button class="filter-btn" data-filter="PRF">PRF</button>
-                    <button class="filter-btn" data-filter="BOPE">BOPE</button>
-                    <button class="filter-btn" data-filter="ROTA">ROTA</button>
-                    <button class="filter-btn" data-filter="EB">EB</button>
-                `;
+            const init = async () => {
+                const [vehicles, coordinates] = await Promise.all([
+                    loadJSON('vehicles.json'),
+                    loadJSON('coordinates.json')
+                ]);
                 
-                // Adicionar eventos aos botões
-                document.querySelectorAll('.filter-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        currentFilter = btn.dataset.filter;
-                        renderItems(document.getElementById('searchInput').value, currentFilter);
-                    });
-                });
-            } else {
-                // Sem filtros para coordenadas
-                filtersContainer.innerHTML = '';
-            }
-        }
+                AppState.set('vehicles', vehicles);
+                AppState.set('coordinates', coordinates);
+                console.log('✅ Dados carregados:', { vehicles: vehicles.length, coordinates: coordinates.length });
+            };
 
-        function renderItems(filter = '', typeFilter = 'Todos') {
-            const itemsList = document.getElementById('itemsList');
-            const currentTab = SystemData.getCurrentTab();
-            
-            if (currentTab === 'veiculos') {
-                const vehicles = SystemData.getVehicles();
+            return { init };
+        })();
+
+        // Módulo de filtros
+        const FilterManager = (() => {
+            const container = document.getElementById('filters');
+
+            const render = (tab) => {
+                if (tab !== 'veiculos') {
+                    container.innerHTML = '';
+                    return;
+                }
+
+                const filters = AppState.getFilters();
+                const currentFilter = AppState.get('currentFilter');
                 
-                const filtered = vehicles.filter(v => {
-                    const matchesSearch = v.carro.toLowerCase().includes(filter.toLowerCase()) ||
-                                         v.spawn.toLowerCase().includes(filter.toLowerCase()) ||
-                                         v.guarnicao.toLowerCase().includes(filter.toLowerCase());
-                    const matchesType = typeFilter === 'Todos' || v.guarnicao === typeFilter;
-                    return matchesSearch && matchesType;
+                container.innerHTML = filters.map(filter => 
+                    `<button class="filter-btn ${filter === currentFilter ? 'active' : ''}" data-filter="${filter}">${filter}</button>`
+                ).join('');
+
+                attachEvents();
+            };
+
+            const attachEvents = () => {
+                container.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', handleFilterClick);
                 });
+            };
 
-                document.querySelector('.result-count').textContent = 
-                    `Mostrando 1-${filtered.length} de ${vehicles.length} veículos`;
+            const handleFilterClick = (e) => {
+                const filter = e.target.dataset.filter;
+                AppState.set('currentFilter', filter);
+                container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                ItemRenderer.render();
+            };
 
-                itemsList.innerHTML = filtered.map((v) => {
-                    return `
+            return { render };
+        })();
+
+        // Módulo de renderização de itens
+        const ItemRenderer = (() => {
+            const listElement = document.getElementById('itemsList');
+            const countElement = document.querySelector('.result-count');
+
+            const escapeHtml = (text) => {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            };
+
+            const getImageUrl = (vehicle) => {
+                if (!vehicle.imagem) return 'asset/default-car.png';
+                return vehicle.imagem.startsWith('http') ? vehicle.imagem : `asset/vehicles/${vehicle.imagem}`;
+            };
+
+            const renderVehicle = (v) => {
+                const imageUrl = getImageUrl(v);
+                const safeCarro = escapeHtml(v.carro);
+                const safeSpawn = escapeHtml(v.spawn);
+                const safeGuarnicao = escapeHtml(v.guarnicao);
+
+                return `
                     <div class="item-card">
+                        <div class="vehicle-image-container">
+                            <img src="${imageUrl}" 
+                                 alt="${safeCarro}" 
+                                 class="vehicle-image"
+                                 onerror="this.src='asset/policia.png'"
+                                 loading="lazy">
+                        </div>
                         <div class="item-info">
                             <div class="info-group">
                                 <span class="item-label">Carro:</span>
-                                <span class="item-value">${v.carro}</span>
+                                <span class="item-value">${safeCarro}</span>
                             </div>
                             <div class="info-group">
                                 <span class="item-label">Spawn:</span>
-                                <span class="item-value">${v.spawn}</span>
+                                <span class="item-value">${safeSpawn}</span>
                             </div>
                             <div class="info-group">
                                 <span class="item-label">Guarnição:</span>
-                                <span class="item-value">${v.guarnicao}</span>
+                                <span class="item-value">${safeGuarnicao}</span>
                             </div>
                         </div>
                         <div class="item-actions">
-                            <button class="btn-copy" onclick="copySpawn('${v.spawn}')" title="Copiar">📋</button>
+                            <button class="btn-copy" onclick="ClipboardManager.copySpawn('${safeSpawn}')" title="Copiar spawn">📋</button>
                         </div>
                     </div>
-                    `;
-                }).join('');
-            } else {
-                const coordinates = SystemData.getCoordinates();
-                
-                const filtered = coordinates.filter(c => {
-                    const matchesSearch = c.local.toLowerCase().includes(filter.toLowerCase()) ||
-                                         c.coordenada.toLowerCase().includes(filter.toLowerCase());
-                    return matchesSearch;
-                });
+                `;
+            };
 
-                document.querySelector('.result-count').textContent = 
-                    `Mostrando 1-${filtered.length} de ${coordinates.length} locais`;
+            const renderCoordinate = (c) => {
+                const safeLocal = escapeHtml(c.local);
+                const safeCoord = escapeHtml(c.coordenada);
 
-                itemsList.innerHTML = filtered.map((c) => {
-                    return `
+                return `
                     <div class="item-card">
                         <div class="item-info">
                             <div class="info-group">
                                 <span class="item-label">Local:</span>
-                                <span class="item-value">${c.local}</span>
+                                <span class="item-value">${safeLocal}</span>
                             </div>
                             <div class="info-group">
                                 <span class="item-label">Coordenada:</span>
-                                <span class="item-value">${c.coordenada}</span>
+                                <span class="item-value">${safeCoord}</span>
                             </div>
                         </div>
                         <div class="item-actions">
-                            <button class="btn-copy" onclick="copyCoordinate('${c.coordenada}')" title="Copiar">📋</button>
+                            <button class="btn-copy" onclick="ClipboardManager.copyCoordinate('${safeCoord}')" title="Copiar coordenada">📋</button>
                         </div>
                     </div>
-                    `;
-                }).join('');
-            }
-        }
+                `;
+            };
 
-        function copySpawn(spawn) {
-            const commandText = `car ${spawn}`;
-            navigator.clipboard.writeText(commandText);
-            showNotification(`✅ Copiado: ${commandText}`);
-        }
+            const filterItems = (items, searchFields) => {
+                const search = AppState.get('searchTerm').toLowerCase();
+                const filter = AppState.get('currentFilter');
+                const tab = AppState.get('currentTab');
 
-        function copyCoordinate(coord) {
-            navigator.clipboard.writeText(coord);
-            showNotification(`✅ Coordenada copiada: ${coord}`);
-        }
+                return items.filter(item => {
+                    const matchesSearch = searchFields.some(field => 
+                        item[field]?.toLowerCase().includes(search)
+                    );
 
-        function showNotification(message) {
-            const notif = document.createElement('div');
-            notif.className = 'notification';
-            notif.textContent = message;
-            document.body.appendChild(notif);
-            setTimeout(() => notif.classList.add('show'), 100);
-            setTimeout(() => {
-                notif.classList.remove('show');
-                setTimeout(() => notif.remove(), 300);
-            }, 2000);
-        }
+                    if (tab === 'veiculos') {
+                        const matchesFilter = filter === 'Todos' || item.guarnicao === filter;
+                        return matchesSearch && matchesFilter;
+                    }
 
-        // Event Listeners
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            renderItems(e.target.value, currentFilter);
-        });
+                    return matchesSearch;
+                });
+            };
 
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
+            const render = () => {
+                const tab = AppState.get('currentTab');
+                
+                if (tab === 'veiculos') {
+                    const vehicles = AppState.get('vehicles');
+                    const filtered = filterItems(vehicles, ['carro', 'spawn', 'guarnicao']);
+                    
+                    countElement.textContent = `Mostrando ${filtered.length} de ${vehicles.length} veículos`;
+                    listElement.innerHTML = filtered.map(renderVehicle).join('');
+                } else {
+                    const coordinates = AppState.get('coordinates');
+                    const filtered = filterItems(coordinates, ['local', 'coordenada']);
+                    
+                    countElement.textContent = `Mostrando ${filtered.length} de ${coordinates.length} locais`;
+                    listElement.innerHTML = filtered.map(renderCoordinate).join('');
+                }
+            };
+
+            return { render };
+        })();
+
+        // Módulo de gerenciamento de clipboard
+        const ClipboardManager = (() => {
+            const copyToClipboard = async (text) => {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                } catch (error) {
+                    console.error('Erro ao copiar:', error);
+                    return false;
+                }
+            };
+
+            const copySpawn = async (spawn) => {
+                const commandText = `car ${spawn}`;
+                const success = await copyToClipboard(commandText);
+                if (success) NotificationManager.show(`✅ Copiado: ${commandText}`);
+            };
+
+            const copyCoordinate = async (coord) => {
+                const success = await copyToClipboard(coord);
+                if (success) NotificationManager.show(`✅ Coordenada copiada: ${coord}`);
+            };
+
+            return { copySpawn, copyCoordinate };
+        })();
+
+        // Módulo de notificações
+        const NotificationManager = (() => {
+            const show = (message) => {
+                const notif = document.createElement('div');
+                notif.className = 'notification';
+                notif.textContent = message;
+                document.body.appendChild(notif);
+                
+                requestAnimationFrame(() => {
+                    notif.classList.add('show');
+                });
+
+                setTimeout(() => {
+                    notif.classList.remove('show');
+                    setTimeout(() => notif.remove(), 300);
+                }, 2000);
+            };
+
+            return { show };
+        })();
+
+        // Módulo de gerenciamento de eventos
+        const EventManager = (() => {
+            const init = () => {
+                // Search input
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    AppState.set('searchTerm', e.target.value);
+                    ItemRenderer.render();
+                });
+
+                // Tab buttons
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.addEventListener('click', handleTabChange);
+                });
+            };
+
+            const handleTabChange = (e) => {
+                const tab = e.target.dataset.tab;
+                
+                // Update UI
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                SystemData.setCurrentTab(btn.dataset.tab);
-                currentFilter = 'Todos';
+                e.target.classList.add('active');
+                
+                // Update state
+                AppState.set('currentTab', tab);
+                AppState.set('currentFilter', 'Todos');
+                AppState.set('searchTerm', '');
                 document.getElementById('searchInput').value = '';
-                renderFilters(btn.dataset.tab);
-                renderItems('', 'Todos');
-            });
-        });
+                
+                // Re-render
+                FilterManager.render(tab);
+                ItemRenderer.render();
+            };
 
-        // Inicialização
-        (async function init() {
-            await SystemData.loadData();
-            renderFilters('veiculos');
-            renderItems();
-            console.log('💡 Edite vehicles.json e coordinates.json para alterar os dados');
+            return { init };
+        })();
+
+        // Inicialização da aplicação
+        (async () => {
+            try {
+                await DataLoader.init();
+                FilterManager.render('veiculos');
+                ItemRenderer.render();
+                EventManager.init();
+                console.log('💡 Edite vehicles.json e coordinates.json para alterar os dados');
+                console.log('📸 Adicione o campo "imagem" nos veículos para exibir fotos');
+            } catch (error) {
+                console.error('❌ Erro ao inicializar aplicação:', error);
+                NotificationManager.show('❌ Erro ao carregar aplicação');
+            }
         })();
     </script>
 </body>
